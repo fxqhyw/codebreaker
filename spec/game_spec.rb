@@ -14,21 +14,25 @@ module Codebreaker
         expect(subject.hint.to_s).to match(/^[1-6]{1}$/)
       end
 
-      it 'increases hints counter by 1' do
+      it 'increases used hints counter by 1' do
         subject.instance_variable_set(:@used_hints, 0)
         subject.hint
         expect(subject.instance_variable_get(:@used_hints)).to eq(1)
       end
     end
-    context '#code_valid?' do
+    context '#make_guess' do
       let(:valid_code) { '1236' }
-      let(:invalid_code) { 'invalid code, lol' }
-      it 'returns true if user code is valid' do
-        expect(subject.send(:code_valid?, valid_code)).to be_truthy
+      let(:invalid_code) { 'code' }
+
+      it 'returns warning if user code is invalid' do
+        allow(subject).to receive(:match_calculation)
+        expect(subject.make_guess(invalid_code)).to eq 'Incorrect code format'
       end
 
-      it 'returns false if user code is invalid' do
-        expect(subject.send(:code_valid?, invalid_code)).to be_falsey
+      it 'reduces available attempts counter by 1' do
+        allow(subject).to receive(:match_calculation)
+        subject.instance_variable_set(:@available_attempts, 1)
+        expect { subject.make_guess(valid_code) }.to change { subject.available_attempts }.to(0)
       end
     end
   end
