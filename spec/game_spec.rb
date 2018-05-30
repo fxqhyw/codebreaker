@@ -34,6 +34,19 @@ module Codebreaker
         subject.instance_variable_set(:@available_attempts, 1)
         expect { subject.make_guess(valid_code) }.to change { subject.available_attempts }.to(0)
       end
+
+      context 'when matched exactly' do
+        it 'returns ++++' do
+          allow(subject).to receive(:match_calculation)
+          subject.instance_variable_set(:@secret_code, [1, 2, 3, 6])
+          expect(subject.make_guess(valid_code)).to eq('++++')
+        end
+
+        it 'returns ++--' do
+          subject.instance_variable_set(:@secret_code, [1, 2, 6, 3])
+          expect(subject.make_guess(valid_code)).to eq('++--')
+        end
+      end
     end
   end
 end

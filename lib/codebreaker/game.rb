@@ -17,7 +17,9 @@ module Codebreaker
     def make_guess(user_code)
       return 'Incorrect code format' unless code_valid?(user_code)
       @available_attempts -= 1
-      match_calculation(user_code)
+      @user_code = user_code.split('').map(&:to_i)
+      return '++++' if @user_code == @secret_code
+      exact_matches + number_matches
     end
 
     private
@@ -30,27 +32,23 @@ module Codebreaker
       user_code.match(/^[1-6]{4}$/)
     end
 
-    def match_calculation(user_code)
-      user_code = user_code.split('').map(&:to_i)
-      return '++++' if user_code == @secret_code
+    def exact_matches
+      @zipped_codes = @secret_code.zip(@user_code).delete_if { |el| el[0] == el[1] }
+      '+' * (@secret_code.length - @zipped_codes.length)
+    end
 
-      result = []
-      unmatched_exact = @secret_code
-      user_code.each_with_index do |el, i|
-        if @secret_code[i] == el
-          result << '+'
-          unmatched_exact.delete_at(i)
+    def number_matches
+      transposed = @zipped_codes.transpose
+      secret_array = transposed[0]
+      user_array = transposed[1]
+
+      user_array.each do |el|
+        if secret_array.include?(el)
+          index = secret_array.index(el)
+          secret_array.delete_at(index)
         end
       end
-
-      unmatched_numbers = unmatched_exact
-      user_code.each_with_index do |el, i|
-        if unmatched_numbers.include?(el)
-          result << '-'
-          unmatched_numbers.delete(el)
-        end
-      end
-      result
+      '-' * (@zipped_codes.length - secret_array.length)
     end
   end
 end
