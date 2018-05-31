@@ -1,6 +1,6 @@
 module Codebreaker
   class Game
-    attr_accessor :available_attempts
+    attr_reader :available_attempts, :used_hints
 
     def initialize
       @available_attempts = 10
