@@ -14,11 +14,14 @@ module Codebreaker
       @game = Game.new
       start_game_message
       until @game.available_attempts.zero?
-        puts "You have #{@game.available_attempts} available attempts"
+        puts "You have #{@game.available_attempts} available attempts."
         input = gets.chomp
-        puts @game.hint if input == 'h'
-        result = @game.make_guess(input)
-        puts result
+        if input == 'h'
+          puts @game.hint
+        else
+          result = @game.make_guess(input)
+          puts result
+        end
         break if won?(result)
       end
       lost if @game.available_attempts.zero?

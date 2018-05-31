@@ -15,7 +15,7 @@ module Codebreaker
     end
 
     def make_guess(user_code)
-      return 'Incorrect code format' unless code_valid?(user_code)
+      return 'Incorrect code format' unless code_valid?(user_code) || hint?(user_code)
       @available_attempts -= 1
       @user_code = user_code.split('').map(&:to_i)
       return '++++' if @user_code == @secret_code
@@ -30,6 +30,10 @@ module Codebreaker
 
     def code_valid?(user_code)
       user_code.match(/^[1-6]{4}$/)
+    end
+
+    def hint?(user_code)
+      user_code.match(/^h$/)
     end
 
     def exact_matches
