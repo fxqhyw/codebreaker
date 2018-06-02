@@ -26,7 +26,7 @@ module Codebreaker
       let(:invalid_code) { 'code' }
 
       it 'returns warning if user code is invalid' do
-        expect(subject.make_guess(invalid_code)).to eq 'Incorrect code format'
+        expect(subject.make_guess(invalid_code)).to eq 'Incorrect code format! Please enter 4 digits from 1 to 6'
       end
 
       it 'increases used counter by 1' do

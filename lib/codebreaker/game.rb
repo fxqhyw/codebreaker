@@ -5,9 +5,10 @@ module Codebreaker
     attr_reader :used_attempts, :used_hints
 
     def initialize
+      @secret_code = generate
       @used_attempts = 0
       @used_hints = 0
-      @secret_code = generate
+      @won = false
     end
 
     def hint
@@ -17,11 +18,22 @@ module Codebreaker
     end
 
     def make_guess(user_code)
-      return 'Incorrect code format' unless code_valid?(user_code)
+      return 'Incorrect code format! Please enter 4 digits from 1 to 6' unless code_valid?(user_code)
       @used_attempts += 1
       @user_code = user_code.chars.map(&:to_i)
       return '++++' if @user_code == @secret_code
       exact_matches + number_matches
+    end
+
+    def save_result(username:, game_status:, file_name: 'player_results.txt')
+      File.new(file_name, 'a') unless File.exist?(file_name)
+      File.open(file_name, 'a') do |file|
+        file.puts("Name: #{username}")
+        file.puts("Game status: #{game_status}")
+        file.puts("Attempts used: #{@used_attempts}")
+        file.puts("Hints used: #{@used_hints}")
+        file.puts('*' * 40)
+      end
     end
 
     private

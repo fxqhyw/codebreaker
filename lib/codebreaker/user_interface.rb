@@ -14,7 +14,7 @@ module Codebreaker
       @game = Game.new
       start_game_message
       while attempts?
-        puts "You used #{@game.used_attempts} attempts."
+        puts "You used #{@game.used_attempts} attempts." if @game.used_attempts > 0
         input = gets.chomp
         if input == 'h'
           puts @game.hint
@@ -35,17 +35,19 @@ module Codebreaker
     end
 
     def attempts?
-      @game.used_attempts != Game::ATTEMPTS
+      @game.used_attempts < Game::ATTEMPTS
     end
 
     def won?(result)
       return false unless result == '++++'
       puts '***Congratulations, you won!***'
+      @game_status = 'won'
       true
     end
 
     def lost
       puts 'No more attempts. You lost :('
+      @game_status = 'lost'
     end
 
     def score
@@ -57,16 +59,16 @@ module Codebreaker
       puts 'Do you want to play again(y/n) or save score(s)?'
       choise = gets.chomp[/^[yns]/]
 
-      if choise == 'y' then start end
+      if choise == 'y' then play end
       if choise == 'n' then bye end
       if choise == 's'
         name = ask_name
-        save_result(name)
+        @game.save_result(username: name, game_status: @game_status)
         puts 'Your result has been saved'
         main_menu
       else
         puts 'Please, make your choice!'
-         save_or_again
+        save_or_again
       end
     end
 
