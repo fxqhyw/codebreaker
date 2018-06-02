@@ -4,17 +4,17 @@ module Codebreaker
   class UserInterface
     def main_menu
       puts '***Welcome to the Codebreaker game!***'
-      puts "Enter any character to start playing or 'exit' for exit\n"
-      gets.chomp == 'exit' ? bye : start
+      puts "Enter any character to start playing or 'exit' for exit"
+      gets.chomp == 'exit' ? bye : play
     end
 
     private
 
-    def start
+    def play
       @game = Game.new
       start_game_message
-      until @game.available_attempts.zero?
-        puts "You have #{@game.available_attempts} available attempts."
+      while attempts?
+        puts "You used #{@game.used_attempts} attempts."
         input = gets.chomp
         if input == 'h'
           puts @game.hint
@@ -24,13 +24,18 @@ module Codebreaker
         end
         break if won?(result)
       end
-      lost if @game.available_attempts.zero?
+      lost unless attempts?
       score
       save_or_again
     end
 
     def start_game_message
-      puts "Please, enter your code to make guess or 'h' to get a hint\n"
+      puts "Please, enter your code to make guess or 'h' to get a hint"
+      puts "You have #{Game::ATTEMPTS} attempts"
+    end
+
+    def attempts?
+      @game.used_attempts != Game::ATTEMPTS
     end
 
     def won?(result)
@@ -44,7 +49,7 @@ module Codebreaker
     end
 
     def score
-      puts "Attempts used: #{10 - @game.available_attempts}\n"
+      puts "Attempts used: #{@game.used_attempts}"
       puts "Hints used: #{@game.used_hints}"
     end
 
@@ -76,5 +81,5 @@ module Codebreaker
     end
   end
 end
-ui = Codebreaker::UserInterface.new
-ui.main_menu
+# ui = Codebreaker::UserInterface.new
+# ui.main_menu

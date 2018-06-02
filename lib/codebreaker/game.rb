@@ -1,9 +1,11 @@
 module Codebreaker
   class Game
-    attr_reader :available_attempts, :used_hints
+    ATTEMPTS = 10
+
+    attr_reader :used_attempts, :used_hints
 
     def initialize
-      @available_attempts = 10
+      @used_attempts = 0
       @used_hints = 0
       @secret_code = generate
     end
@@ -15,9 +17,9 @@ module Codebreaker
     end
 
     def make_guess(user_code)
-      return 'Incorrect code format' unless code_valid?(user_code) || hint?(user_code)
-      @available_attempts -= 1
-      @user_code = user_code.split('').map(&:to_i)
+      return 'Incorrect code format' unless code_valid?(user_code)
+      @used_attempts += 1
+      @user_code = user_code.chars.map(&:to_i)
       return '++++' if @user_code == @secret_code
       exact_matches + number_matches
     end
@@ -30,10 +32,6 @@ module Codebreaker
 
     def code_valid?(user_code)
       user_code.match(/^[1-6]{4}$/)
-    end
-
-    def hint?(user_code)
-      user_code.match(/^h$/)
     end
 
     def exact_matches

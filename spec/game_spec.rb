@@ -29,9 +29,9 @@ module Codebreaker
         expect(subject.make_guess(invalid_code)).to eq 'Incorrect code format'
       end
 
-      it 'reduces available attempts counter by 1' do
-        subject.instance_variable_set(:@available_attempts, 1)
-        expect { subject.make_guess(valid_code) }.to change { subject.available_attempts }.to(0)
+      it 'increases used counter by 1' do
+        subject.instance_variable_set(:@used_attempts, 0)
+        expect { subject.make_guess(valid_code) }.to change { subject.used_attempts }.to(1)
       end
 
       context 'making guesses' do
