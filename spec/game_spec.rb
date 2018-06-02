@@ -29,7 +29,7 @@ module Codebreaker
         expect(subject.make_guess(invalid_code)).to eq 'Incorrect code format! Please enter 4 digits from 1 to 6'
       end
 
-      it 'increases used counter by 1' do
+      it 'increases used attempts counter by 1' do
         subject.instance_variable_set(:@used_attempts, 0)
         expect { subject.make_guess(valid_code) }.to change { subject.used_attempts }.to(1)
       end
@@ -104,6 +104,21 @@ module Codebreaker
           subject.instance_variable_set(:@secret_code, [5, 5, 5, 5])
           expect(subject.make_guess(valid_code)).to eq('')
         end
+      end
+    end
+
+    context '#save_result' do
+      let(:file) { 'test.txt' }
+      after { File.delete(file) }
+
+      it 'creates file if it does not exist' do
+        subject.save_result(username: 'test_user', game_status: 'won', file_name: file)
+        expect(File.exist?(file)).to be true
+      end
+
+      it 'saves results to file' do
+        subject.save_result(username: 'test_user', game_status: 'won', file_name: file)
+        expect(File.zero?(file)).to be false
       end
     end
   end
