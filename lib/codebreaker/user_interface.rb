@@ -84,5 +84,5 @@ module Codebreaker
     end
   end
 end
- ui = Codebreaker::UserInterface.new
- ui.main_menu
+# ui = Codebreaker::UserInterface.new
+# ui.main_menu
