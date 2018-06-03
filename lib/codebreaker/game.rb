@@ -8,7 +8,6 @@ module Codebreaker
       @secret_code = generate
       @used_attempts = 0
       @used_hints = 0
-      @won = false
     end
 
     def hint

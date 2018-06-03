@@ -8,8 +8,6 @@ module Codebreaker
       gets.chomp == 'exit' ? bye : play
     end
 
-    private
-
     def play
       @game = Game.new
       start_game_message
@@ -17,7 +15,8 @@ module Codebreaker
         puts "You used #{@game.used_attempts} attempts." if @game.used_attempts > 0
         input = gets.chomp
         if input == 'h'
-          puts @game.hint
+          hint = @game.hint
+          puts hint
         else
           result = @game.make_guess(input)
           puts result
@@ -28,6 +27,8 @@ module Codebreaker
       score
       save_or_again
     end
+
+    private
 
     def start_game_message
       puts "Please, enter your code to make guess or 'h' to get a hint"
@@ -57,7 +58,7 @@ module Codebreaker
 
     def save_or_again
       puts 'Do you want to play again(y/n) or save score(s)?'
-      choise = gets.chomp[/^[yns]/]
+      choise = gets.chomp
 
       if choise == 'y' then play end
       if choise == 'n' then bye end
@@ -65,11 +66,11 @@ module Codebreaker
         name = ask_name
         @game.save_result(username: name, game_status: @game_status)
         puts 'Your result has been saved'
-        main_menu
       else
-        puts 'Please, make your choice!'
-        save_or_again
+        puts 'Your result has been saved'
+        @game.save_result(username: 'Unkwnown player', game_status: @game_status)
       end
+      main_menu
     end
 
     def ask_name
@@ -83,5 +84,5 @@ module Codebreaker
     end
   end
 end
-# ui = Codebreaker::UserInterface.new
-# ui.main_menu
+ ui = Codebreaker::UserInterface.new
+ ui.main_menu
