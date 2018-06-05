@@ -1,54 +1,84 @@
 require_relative 'game'
+require_relative 'user_interface_helper'
 
 module Codebreaker
   class UserInterface
+    include UiHelper
+
     def main_menu
-      puts '***Welcome to the Codebreaker game!***'
-      puts "Enter any character to start playing or 'exit' for exit"
+      greeting_message
       gets.chomp == 'exit' ? bye : play
     end
 
     def play
-      @game = Game.new
+      create_new_game
       start_game_message
-      while attempts?
-        puts "You used #{@game.used_attempts} attempts." if @game.used_attempts > 0
-        input = gets.chomp
-        if input == 'h'
-          hint = @game.hint
-          puts hint
-        else
-          result = @game.make_guess(input)
-          puts result
-        end
-        break if won?(result)
-      end
+      playing
       lost unless attempts?
       score
-      save_or_again
+      after_game_menu
     end
 
     private
 
-    def start_game_message
-      puts "Please, enter your code to make guess or 'h' to get a hint"
-      puts "You have #{Game::ATTEMPTS} attempts"
+    def create_new_game
+      @game = Game.new
+    end
+
+    def playing
+      while attempts?
+        used_attempts_message
+        input = gets.chomp
+        if call_hint?(input)
+          show_hint
+        else
+          result = @game.make_guess(input)
+          show_result(result)
+        end
+        if won?(result)
+          won
+          break
+        end
+      end
     end
 
     def attempts?
       @game.used_attempts < Game::ATTEMPTS
     end
 
+    def hints?
+      @game.used_hints < Game::HINTS
+    end
+
+    def used_attempts_message
+      puts "You used #{@game.used_attempts} attempts." if @game.used_attempts > 0
+    end
+
+    def call_hint?(input)
+      input.match(/^h$/)
+    end
+
+    def show_hint
+      hints? ? puts(@game.hint) : no_hints_message
+    end
+
+    def show_result(result)
+      puts result
+    end
+
     def won?(result)
       return false unless result == '++++'
-      puts '***Congratulations, you won!***'
-      @game_status = 'won'
       true
     end
 
+    def won
+      @game_status = 'won'
+      won_message
+    end
+
     def lost
-      puts 'No more attempts. You lost :('
       @game_status = 'lost'
+      lost_message
     end
 
     def score
@@ -56,33 +86,21 @@ module Codebreaker
       puts "Hints used: #{@game.used_hints}"
     end
 
-    def save_or_again
+    def after_game_menu
       puts 'Do you want to play again(y/n) or save score(s)?'
-      choise = gets.chomp
+      choise = gets.chomp[/^[yns]/]
 
       if choise == 'y' then play end
       if choise == 'n' then bye end
-      if choise == 's'
-        name = ask_name
-        @game.save_result(username: name, game_status: @game_status)
-        puts 'Your result has been saved'
-      else
-        puts 'Your result has been saved'
-        @game.save_result(username: 'Unkwnown player', game_status: @game_status)
-      end
+      if choise == 's' then save end
       main_menu
     end
 
-    def ask_name
-      puts 'Please, type your name:'
-      gets.chomp
-    end
-
-    def bye
-      puts 'Bye!'
-      exit
+    def save
+      name = ask_name
+      @game.save_result(username: name, game_status: @game_status)
+      saved_result_message
     end
   end
 end
-# ui = Codebreaker::UserInterface.new
-# ui.main_menu
+

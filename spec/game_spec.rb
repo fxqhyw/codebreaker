@@ -9,9 +9,10 @@ module Codebreaker
     end
 
     describe '#hint' do
-      it 'returns one random number from the secret code' do
-        subject.instance_variable_set(:@secret_code, [1, 2, 3, 6])
-        expect(subject.hint.to_s).to match(/^[1-6]{1}$/)
+      it 'returns one last number from the hints array and delete it' do
+        subject.instance_variable_set(:@hints_array, [1, 2, 3, 6])
+        expect(subject.hint.to_s).to eq('6')
+        expect(subject.instance_variable_get(:@hints_array).length).to eq(3)
       end
 
       it 'increases used hints counter by 1' do

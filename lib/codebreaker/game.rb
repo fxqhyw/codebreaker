@@ -1,19 +1,20 @@
 module Codebreaker
   class Game
     ATTEMPTS = 10
+    HINTS = 4
 
     attr_reader :used_attempts, :used_hints
 
     def initialize
       @secret_code = generate
+      @hints_array = mix_code
       @used_attempts = 0
       @used_hints = 0
     end
 
     def hint
       @used_hints += 1
-      index = rand(0..3)
-      @secret_code[index]
+      @hints_array.pop
     end
 
     def make_guess(user_code)
@@ -39,6 +40,10 @@ module Codebreaker
 
     def generate
       Array.new(4) { rand(1..6) }
+    end
+
+    def mix_code
+      @secret_code.shuffle
     end
 
     def code_valid?(user_code)
