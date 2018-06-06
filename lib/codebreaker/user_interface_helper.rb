@@ -23,6 +23,10 @@ module UiHelper
     puts 'You used all of attempts. You lost :('
   end
 
+  def after_game_question
+    puts 'Do you want to play again(y/n) or save score(s)?'
+  end
+
   def ask_name
     puts 'Please, type your name:'
     gets.chomp

@@ -114,6 +114,88 @@ module Codebreaker
         end
 
         context 'when lost' do
+          before(:each) do
+            allow(subject).to receive(:create_new_game)
+            allow(subject).to receive(:start_game_message)
+            allow(subject).to receive(:attempts?).and_return(false)
+          end
+
+          it "sets an instance @game_status to 'lost'" do
+            allow(subject).to receive(:lost_message)
+            subject.play
+            expect(subject.instance_variable_get(:@game_status)).to eq('lost')
+          end
+
+          it 'outputs lost message' do
+            expect { subject.play }.to output("You used all of attempts. You lost :(\n").to_stdout
+          end
+        end
+      end
+      context 'after playing' do
+        before(:each) do
+          allow(subject).to receive(:create_new_game)
+          allow(subject).to receive(:start_game_message)
+          allow(subject).to receive(:attempts?).and_return(false)
+          allow(subject).to receive(:lost)
+        end
+
+        it 'outputs score' do
+          allow(subject).to receive(:after_game_menu)
+          game.instance_variable_set(:@used_attempts, 5)
+          game.instance_variable_set(:@used_hints, 2)
+          expect { subject.play }.to output("Attempts used: 5\nHints used: 2\n").to_stdout
+        end
+
+        context 'after game menu' do
+          before(:each) do
+            allow(subject).to receive(:score)
+            allow(subject).to receive(:main_menu)
+          end
+
+          it 'ouputs after game question' do
+            allow(subject).to receive_message_chain(:gets, :chomp, :[])
+            expect { subject.play }.to output("Do you want to play again(y/n) or save score(s)?\n").to_stdout
+          end
+
+          context 'when input' do
+            before(:each) do
+              allow(subject).to receive(:after_game_question)
+            end
+
+            context "when input is 'y'" do
+              it "calls 'play'" do
+                allow(subject).to receive_message_chain(:gets, :chomp).and_return('y')
+                expect(subject).to receive(:play)
+                subject.play
+              end
+            end
+
+            context "when input is 'n'" do
+              it "calls 'bye'" do
+                allow(subject).to receive_message_chain(:gets, :chomp).and_return('n')
+                expect(subject).to receive(:bye)
+                subject.play
+              end
+            end
+
+            context "when input is 's'" do
+              before(:each) do
+                allow(subject).to receive(:ask_name)
+                allow(subject).to receive_message_chain(:gets, :chomp).and_return('s')
+              end
+
+              it "calls 'save_result'" do
+                allow(subject).to receive(:saved_result_message)
+                expect(game).to receive(:save_result)
+                subject.play
+              end
+
+              it 'ouputs saved result message' do
+                allow(game).to receive(:save_result)
+                expect { subject.play }.to output("Your result has been saved\n").to_stdout
+              end
+            end
+          end
         end
       end
     end

@@ -87,7 +87,7 @@ module Codebreaker
     end
 
     def after_game_menu
-      puts 'Do you want to play again(y/n) or save score(s)?'
+      after_game_question
       choise = gets.chomp[/^[yns]/]
 
       if choise == 'y' then play end
