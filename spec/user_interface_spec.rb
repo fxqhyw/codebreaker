@@ -12,7 +12,7 @@ module Codebreaker
                                                "Enter any characters to start playing or 'exit' for exit\n").to_stdout
       end
 
-      context 'when input something' do
+      context 'input something' do
         before { allow(subject).to receive(:greeting_message) }
 
         context "when input is an 'exit'" do
@@ -23,7 +23,7 @@ module Codebreaker
           end
         end
 
-        context "when input is a 'play'" do
+        context "input is a 'play'" do
           it "calls 'play'" do
             allow(subject).to receive_message_chain(:gets, :chomp).and_return('play')
             expect(subject).to receive(:play)
@@ -35,7 +35,7 @@ module Codebreaker
 
     describe '#play' do
       context 'before playing' do
-        before(:each) do
+        before do
           allow(subject).to receive(:playing)
           allow(subject).to receive(:lost)
           allow(subject).to receive(:score)
@@ -45,32 +45,30 @@ module Codebreaker
         it 'sets instance @game to object of Game class' do
           allow(subject).to receive(:start_game_message)
           subject.play
-          expect(subject.instance_variable_get(:@game).instance_of?(Game)).to be true
+          expect(subject.instance_variable_get(:@game)).to be_instance_of(Game)
         end
 
         it 'outputs start game message' do
-          stub_const('Codebreaker::Game::ATTEMPTS', 10)
-          stub_const('Codebreaker::Game::HINTS', 4)
           expect { subject.play }.to output("Please, enter your code to make guess or 'h' to get a hint\n"\
                                             "You have #{Game::ATTEMPTS} attempts and #{Game::HINTS} hints\n").to_stdout
         end
       end
 
-      context 'playing' do
-        before(:each) do
+      describe '#playing' do
+        before do
           allow(subject).to receive(:start_game_message)
           allow(subject).to receive(:score)
           allow(subject).to receive(:after_game_menu)
         end
 
         context 'input' do
-          before(:each) do
+          before do
             allow(subject).to receive(:create_new_game)
             allow(subject).to receive(:won?).and_return(true)
             allow(subject).to receive(:won)
           end
 
-          context "when input is 'h'" do
+          context "input is 'h'" do
             it 'outputs hint' do
               allow(subject).to receive_message_chain(:gets, :chomp).and_return('h')
               allow(game).to receive(:hint).and_return(3)
@@ -85,7 +83,7 @@ module Codebreaker
             end
           end
 
-          context 'when input is a valid code' do
+          context 'input is a valid code' do
             it 'outputs result' do
               allow(subject).to receive_message_chain(:gets, :chomp).and_return('1234')
               allow(game).to receive(:make_guess).and_return('++--')
@@ -94,8 +92,8 @@ module Codebreaker
           end
         end
 
-        context 'when won' do
-          before(:each) do
+        context '#won' do
+          before do
             allow(subject).to receive(:create_new_game)
             allow(subject).to receive_message_chain(:gets, :chomp).and_return('1234')
             allow(game).to receive(:make_guess).and_return('++++')
@@ -103,18 +101,18 @@ module Codebreaker
           end
 
           it "sets an instance @game_status to 'won'" do
-            allow(subject).to receive(:won_message)
+            allow(subject).to receive(:puts)
             subject.play
             expect(subject.instance_variable_get(:@game_status)).to eq('won')
           end
 
           it 'outputs congratulations message' do
-            expect { subject.play }.to output("***Congratulations, you won!***\n").to_stdout
+            expect { subject.play }.to output("++++\n***Congratulations, you won!***\n").to_stdout
           end
         end
 
-        context 'when lost' do
-          before(:each) do
+        context '#lost' do
+          before do
             allow(subject).to receive(:create_new_game)
             allow(subject).to receive(:start_game_message)
             allow(subject).to receive(:attempts?).and_return(false)
@@ -131,8 +129,9 @@ module Codebreaker
           end
         end
       end
-      context 'after playing' do
-        before(:each) do
+
+      describe '#score' do
+        before do
           allow(subject).to receive(:create_new_game)
           allow(subject).to receive(:start_game_message)
           allow(subject).to receive(:attempts?).and_return(false)
@@ -146,8 +145,8 @@ module Codebreaker
           expect { subject.play }.to output("Attempts used: 5\nHints used: 2\n").to_stdout
         end
 
-        context 'after game menu' do
-          before(:each) do
+        describe '#after game menu' do
+          before do
             allow(subject).to receive(:score)
             allow(subject).to receive(:main_menu)
           end
@@ -157,12 +156,10 @@ module Codebreaker
             expect { subject.play }.to output("Do you want to play again(y/n) or save score(s)?\n").to_stdout
           end
 
-          context 'when input' do
-            before(:each) do
-              allow(subject).to receive(:after_game_question)
-            end
+          context 'input' do
+            before { allow(subject).to receive(:after_game_message) }
 
-            context "when input is 'y'" do
+            context "input is 'y'" do
               it "calls 'play'" do
                 allow(subject).to receive_message_chain(:gets, :chomp).and_return('y')
                 expect(subject).to receive(:play)
@@ -170,7 +167,7 @@ module Codebreaker
               end
             end
 
-            context "when input is 'n'" do
+            context "input is 'n'" do
               it "calls 'bye'" do
                 allow(subject).to receive_message_chain(:gets, :chomp).and_return('n')
                 expect(subject).to receive(:bye)
@@ -178,13 +175,13 @@ module Codebreaker
               end
             end
 
-            context "when input is 's'" do
-              before(:each) do
+            context "input is 's'" do
+              before do
                 allow(subject).to receive(:ask_name)
                 allow(subject).to receive_message_chain(:gets, :chomp).and_return('s')
               end
 
-              it "calls 'save_result'" do
+              it "calls '#save_result'" do
                 allow(subject).to receive(:saved_result_message)
                 expect(game).to receive(:save_result)
                 subject.play

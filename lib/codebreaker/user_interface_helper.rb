@@ -11,6 +11,10 @@ module UiHelper
     puts "You have #{Codebreaker::Game::ATTEMPTS} attempts and #{Codebreaker::Game::HINTS} hints"
   end
 
+  def used_attempts_message
+    puts "You used #{@game.used_attempts} attempts." if @game.used_attempts > 0
+  end
+
   def no_hints_message
     puts 'You used all of hints!'
   end
@@ -23,21 +27,11 @@ module UiHelper
     puts 'You used all of attempts. You lost :('
   end
 
-  def after_game_question
+  def after_game_message
     puts 'Do you want to play again(y/n) or save score(s)?'
-  end
-
-  def ask_name
-    puts 'Please, type your name:'
-    gets.chomp
   end
 
   def saved_result_message
     puts 'Your result has been saved'
-  end
-
-  def bye
-    puts 'Bye!'
-    exit
   end
 end

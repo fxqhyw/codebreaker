@@ -10,9 +10,9 @@ module Codebreaker
 
     describe '#hint' do
       it 'returns one last number from the hints array and delete it' do
-        subject.instance_variable_set(:@hints_array, [1, 2, 3, 6])
+        subject.instance_variable_set(:@shuffled_secret_code, [1, 2, 3, 6])
         expect(subject.hint.to_s).to eq('6')
-        expect(subject.instance_variable_get(:@hints_array).length).to eq(3)
+        expect(subject.instance_variable_get(:@shuffled_secret_code).length).to eq(3)
       end
 
       it 'increases used hints counter by 1' do
@@ -23,101 +23,102 @@ module Codebreaker
     end
 
     describe '#make_guess' do
-      let(:valid_code) { '1236' }
-      let(:invalid_code) { 'code' }
-
-      it 'returns warning if user code is invalid' do
-        expect(subject.make_guess(invalid_code)).to eq 'Incorrect code format! Please enter 4 digits from 1 to 6'
+      context 'user code is invalid' do
+        it 'returns warning' do
+          expect(subject.make_guess('invalid_code')).to eq 'Incorrect code format! Please enter 4 digits from 1 to 6'
+        end
       end
 
-      it 'increases used attempts counter by 1' do
-        subject.instance_variable_set(:@used_attempts, 0)
-        expect { subject.make_guess(valid_code) }.to change { subject.used_attempts }.to(1)
+      context 'user code is valid' do
+        it 'increases used attempts counter by 1' do
+          subject.instance_variable_set(:@used_attempts, 0)
+          expect { subject.make_guess('1236') }.to change { subject.used_attempts }.to(1)
+        end
       end
 
-      it 'guesses exactly rigth' do
-        subject.instance_variable_set(:@secret_code, [1, 2, 3, 6])
-        expect(subject.make_guess(valid_code)).to eq('++++')
-      end
+      context 'returns matches result' do
+        before { subject.instance_variable_set(:@secret_code, [1, 2, 3, 6]) }
 
-      it 'guesses 3 numbers exactly' do
-        subject.instance_variable_set(:@secret_code, [1, 2, 3, 5])
-        expect(subject.make_guess(valid_code)).to eq('+++')
-      end
+        context 'only exactly matches' do
+          it do
+            expect(subject.make_guess('1236')).to eq('++++')
+          end
 
-      it 'guesses 2 numbers exactly' do
-        subject.instance_variable_set(:@secret_code, [1, 5, 3, 5])
-        expect(subject.make_guess(valid_code)).to eq('++')
-      end
+          it do
+            expect(subject.make_guess('1235')).to eq('+++')
+          end
 
-      it 'guesses 2 numbers exactly and 2 numbers match' do
-        subject.instance_variable_set(:@secret_code, [1, 6, 3, 2])
-        expect(subject.make_guess(valid_code)).to eq('++--')
-      end
+          it do
+            expect(subject.make_guess('1535')).to eq('++')
+          end
 
-      it 'guesses 2 numbers exactly and 1 numbers match' do
-        subject.instance_variable_set(:@secret_code, [1, 6, 3, 4])
-        expect(subject.make_guess(valid_code)).to eq('++-')
-      end
+          it do
+            expect(subject.make_guess('5255')).to eq('+')
+          end
+        end
 
-      it 'guesses 1 number exactly' do
-        subject.instance_variable_set(:@secret_code, [5, 2, 5, 5])
-        expect(subject.make_guess(valid_code)).to eq('+')
-      end
+        context 'exactly and number matches' do
+          it do
+            expect(subject.make_guess('1632')).to eq('++--')
+          end
 
-      it 'guesses 1 number exactly and 1 number match' do
-        subject.instance_variable_set(:@secret_code, [5, 2, 6, 5])
-        expect(subject.make_guess(valid_code)).to eq('+-')
-      end
+          it do
+            expect(subject.make_guess('1634')).to eq('++-')
+          end
 
-      it 'guesses 1 number exactly and 2 numbers match' do
-        subject.instance_variable_set(:@secret_code, [5, 2, 6, 1])
-        expect(subject.make_guess(valid_code)).to eq('+--')
-      end
+          it do
+            expect(subject.make_guess('5265')).to eq('+-')
+          end
 
-      it 'guesses 1 number exactly and 3 numbers match' do
-        subject.instance_variable_set(:@secret_code, [3, 2, 6, 1])
-        expect(subject.make_guess(valid_code)).to eq('+---')
-      end
+          it do
+            expect(subject.make_guess('5261')).to eq('+--')
+          end
 
-      it 'guesses 1 number match' do
-        subject.instance_variable_set(:@secret_code, [4, 4, 6, 4])
-        expect(subject.make_guess(valid_code)).to eq('-')
-      end
+          it do
+            expect(subject.make_guess('3261')).to eq('+---')
+          end
+        end
 
-      it 'guesses 2 numbers match' do
-        subject.instance_variable_set(:@secret_code, [4, 4, 6, 2])
-        expect(subject.make_guess(valid_code)).to eq('--')
-      end
+        context 'only number matches' do
+          it do
+            expect(subject.make_guess('4464')).to eq('-')
+          end
 
-      it 'guesses 3 numbers match' do
-        subject.instance_variable_set(:@secret_code, [4, 3, 6, 2])
-        expect(subject.make_guess(valid_code)).to eq('---')
-      end
+          it do
+            expect(subject.make_guess('4462')).to eq('--')
+          end
 
-      it 'guesses 4 numbers match' do
-        subject.instance_variable_set(:@secret_code, [6, 3, 2, 1])
-        expect(subject.make_guess(valid_code)).to eq('----')
-      end
+          it do
+            expect(subject.make_guess('4362')).to eq('---')
+          end
 
-      it 'guesses no matched' do
-        subject.instance_variable_set(:@secret_code, [5, 5, 5, 5])
-        expect(subject.make_guess(valid_code)).to eq('')
+          it do
+            expect(subject.make_guess('6321')).to eq('----')
+          end
+        end
+
+        context 'no matches' do
+          it do
+            expect(subject.make_guess('5555')).to eq('')
+          end
+        end
       end
     end
 
     describe '#save_result' do
-      let(:file) { 'test.txt' }
-      after { File.delete(file) }
+      let(:file_name) { 'test.txt' }
 
-      it 'creates file if it does not exist' do
-        subject.save_result(username: 'test_user', game_status: 'won', file_name: file)
-        expect(File.exist?(file)).to be true
-      end
-
-      it 'saves results to file' do
-        subject.save_result(username: 'test_user', game_status: 'won', file_name: file)
-        expect(File.zero?(file)).to be false
+      it "creates 'file_name' and put reult in it" do
+        subject.instance_variable_set(:@used_attempts, 5)
+        subject.instance_variable_set(:@used_hints, 2)
+        file = double('file')
+        expect(File).to receive(:open).with(file_name, 'a').and_yield(file)
+        expect(file).to receive(:puts).with('Name: test_user')
+        expect(file).to receive(:puts).with('Game status: won')
+        expect(file).to receive(:puts).with('Attempts used: 5')
+        expect(file).to receive(:puts).with('Hints used: 2')
+        expect(file).to receive(:puts).with('*' * 40)
+        subject.save_result(username: 'test_user', game_status: 'won', file_name: file_name)
       end
     end
   end

@@ -7,14 +7,14 @@ module Codebreaker
 
     def initialize
       @secret_code = generate
-      @hints_array = mix_code
+      @shuffled_secret_code = @secret_code.shuffle
       @used_attempts = 0
       @used_hints = 0
     end
 
     def hint
       @used_hints += 1
-      @hints_array.pop
+      @shuffled_secret_code.pop
     end
 
     def make_guess(user_code)
@@ -26,7 +26,6 @@ module Codebreaker
     end
 
     def save_result(username:, game_status:, file_name: 'player_results.txt')
-      File.new(file_name, 'a') unless File.exist?(file_name)
       File.open(file_name, 'a') do |file|
         file.puts("Name: #{username}")
         file.puts("Game status: #{game_status}")
@@ -40,10 +39,6 @@ module Codebreaker
 
     def generate
       Array.new(4) { rand(1..6) }
-    end
-
-    def mix_code
-      @secret_code.shuffle
     end
 
     def code_valid?(user_code)

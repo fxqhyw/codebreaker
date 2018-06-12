@@ -33,7 +33,7 @@ module Codebreaker
           show_hint
         else
           result = @game.make_guess(input)
-          show_result(result)
+          puts result
         end
         if won?(result)
           won
@@ -50,10 +50,6 @@ module Codebreaker
       @game.used_hints < Game::HINTS
     end
 
-    def used_attempts_message
-      puts "You used #{@game.used_attempts} attempts." if @game.used_attempts > 0
-    end
-
     def call_hint?(input)
       input.match(/^h$/)
     end
@@ -67,8 +63,7 @@ module Codebreaker
     end
 
     def won?(result)
-      return false unless result == '++++'
-      true
+      result == '++++'
     end
 
     def won
@@ -87,7 +82,7 @@ module Codebreaker
     end
 
     def after_game_menu
-      after_game_question
+      after_game_message
       choise = gets.chomp[/^[yns]/]
 
       if choise == 'y' then play end
@@ -101,6 +96,15 @@ module Codebreaker
       @game.save_result(username: name, game_status: @game_status)
       saved_result_message
     end
+
+    def ask_name
+      puts 'Please, type your name:'
+      gets.chomp
+    end
+
+    def bye
+      puts 'Bye!'
+      exit
+    end
   end
 end
-
