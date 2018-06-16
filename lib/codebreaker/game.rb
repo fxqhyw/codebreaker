@@ -18,7 +18,7 @@ module Codebreaker
     end
 
     def make_guess(user_code)
-      return 'Incorrect code format! Please enter 4 digits from 1 to 6' unless code_valid?(user_code)
+      return unless code_valid?(user_code)
       @used_attempts += 1
       @user_code = user_code.chars.map(&:to_i)
       return '++++' if @user_code == @secret_code

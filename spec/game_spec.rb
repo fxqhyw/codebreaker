@@ -24,8 +24,8 @@ module Codebreaker
 
     describe '#make_guess' do
       context 'user code is invalid' do
-        it 'returns warning' do
-          expect(subject.make_guess('invalid_code')).to eq 'Incorrect code format! Please enter 4 digits from 1 to 6'
+        it 'returns nil' do
+          expect(subject.make_guess('invalid_code')).to be_nil
         end
       end
 

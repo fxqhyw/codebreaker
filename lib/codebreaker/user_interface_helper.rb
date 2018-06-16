@@ -19,6 +19,10 @@ module UiHelper
     puts 'You used all of hints!'
   end
 
+  def incorrect_format_message
+    puts 'Incoorect format! Please enter 4 digits from 1 to 6'
+  end
+
   def won_message
     puts '***Congratulations, you won!***'
   end

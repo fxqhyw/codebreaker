@@ -33,7 +33,7 @@ module Codebreaker
           show_hint
         else
           result = @game.make_guess(input)
-          puts result
+          result ? puts(result) : incorrect_format_message
         end
         if won?(result)
           won
