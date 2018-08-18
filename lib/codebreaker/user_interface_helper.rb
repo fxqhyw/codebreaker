@@ -1,6 +1,6 @@
 require_relative 'game'
 
-module UiHelper
+module UIHelper
   def greeting_message
     puts '***Welcome to the Codebreaker game!***'
     puts "Enter any characters to start playing or 'exit' for exit"

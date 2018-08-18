@@ -3,11 +3,11 @@ require_relative 'user_interface_helper'
 
 module Codebreaker
   class UserInterface
-    include UiHelper
+    include UIHelper
 
     def main_menu
       greeting_message
-      gets.chomp == 'exit' ? bye : play
+      user_input == 'exit' ? bye : play
     end
 
     def play
@@ -28,7 +28,7 @@ module Codebreaker
     def playing
       while attempts?
         used_attempts_message
-        input = gets.chomp
+        input = user_input
         if call_hint?(input)
           show_hint
         else
@@ -46,16 +46,12 @@ module Codebreaker
       @game.used_attempts < Game::ATTEMPTS
     end
 
-    def hints?
-      @game.used_hints < Game::HINTS
-    end
-
     def call_hint?(input)
       input.match(/^h$/)
     end
 
     def show_hint
-      hints? ? puts(@game.hint) : no_hints_message
+      @game.used_hints < Game::HINTS ? puts(@game.hint) : no_hints_message
     end
 
     def show_result(result)
@@ -83,11 +79,15 @@ module Codebreaker
 
     def after_game_menu
       after_game_message
-      choise = gets.chomp[/^[yns]/]
+      choise = user_input[/^[yns]/]
 
-      if choise == 'y' then play end
-      if choise == 'n' then bye end
-      if choise == 's' then save end
+      send(
+        {
+          y: 'play',
+          n: 'bye',
+          s: 'save'
+        }[choise.to_sym]
+      )
       main_menu
     end
 
@@ -95,6 +95,10 @@ module Codebreaker
       name = ask_name
       @game.save_result(username: name, game_status: @game_status)
       saved_result_message
+    end
+
+    def user_input
+      gets.chomp
     end
 
     def ask_name

@@ -2,9 +2,9 @@ require 'spec_helper'
 
 module Codebreaker
   RSpec.describe Game do
-    describe '#generate' do
+    describe '#generate_secret_code' do
       it 'returns secret code array of 4 numbers from 1 to 6' do
-        expect(subject.send(:generate).join).to match(/^[1-6]{4}$/)
+        expect(subject.send(:generate_secret_code).join).to match(/^[1-6]{4}$/)
       end
     end
 
@@ -16,9 +16,7 @@ module Codebreaker
       end
 
       it 'increases used hints counter by 1' do
-        subject.instance_variable_set(:@used_hints, 0)
-        subject.hint
-        expect(subject.instance_variable_get(:@used_hints)).to eq(1)
+        expect{ subject.hint }.to change{ subject.instance_variable_get(:@used_hints) }.from(0).to(1)
       end
     end
 
@@ -31,8 +29,7 @@ module Codebreaker
 
       context 'user code is valid' do
         it 'increases used attempts counter by 1' do
-          subject.instance_variable_set(:@used_attempts, 0)
-          expect { subject.make_guess('1236') }.to change { subject.used_attempts }.to(1)
+          expect { subject.make_guess('1236') }.to change { subject.used_attempts }.from(0).to(1)
         end
       end
 
@@ -41,59 +38,44 @@ module Codebreaker
 
         context 'only exactly matches' do
           it do
-            expect(subject.make_guess('1236')).to eq('++++')
-          end
-
-          it do
-            expect(subject.make_guess('1235')).to eq('+++')
-          end
-
-          it do
-            expect(subject.make_guess('1535')).to eq('++')
-          end
-
-          it do
-            expect(subject.make_guess('5255')).to eq('+')
+            results = {
+              '1236': '++++',
+              '1235': '+++',
+              '1535': '++',
+              '5255': '+'
+            }
+            results.each_pair do |guess, response|
+              expect(subject.make_guess(guess.to_s)).to eq(response)
+            end
           end
         end
 
         context 'exactly and number matches' do
           it do
-            expect(subject.make_guess('1632')).to eq('++--')
-          end
-
-          it do
-            expect(subject.make_guess('1634')).to eq('++-')
-          end
-
-          it do
-            expect(subject.make_guess('5265')).to eq('+-')
-          end
-
-          it do
-            expect(subject.make_guess('5261')).to eq('+--')
-          end
-
-          it do
-            expect(subject.make_guess('3261')).to eq('+---')
+            results = {
+              '1632': '++--',
+              '1634': '++-',
+              '5265': '+-',
+              '5261': '+--',
+              '3261': '+---'
+            }
+            results.each_pair do |guess, response|
+              expect(subject.make_guess(guess.to_s)).to eq(response)
+            end
           end
         end
 
         context 'only number matches' do
           it do
-            expect(subject.make_guess('4464')).to eq('-')
-          end
-
-          it do
-            expect(subject.make_guess('4462')).to eq('--')
-          end
-
-          it do
-            expect(subject.make_guess('4362')).to eq('---')
-          end
-
-          it do
-            expect(subject.make_guess('6321')).to eq('----')
+            results = {
+              '4464': '-',
+              '4462': '--',
+              '4362': '---',
+              '6321': '----'
+            }
+            results.each_pair do |guess, response|
+              expect(subject.make_guess(guess.to_s)).to eq(response)
+            end
           end
         end
 

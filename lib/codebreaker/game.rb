@@ -6,7 +6,7 @@ module Codebreaker
     attr_reader :used_attempts, :used_hints
 
     def initialize
-      @secret_code = generate
+      @secret_code = generate_secret_code
       @shuffled_secret_code = @secret_code.shuffle
       @used_attempts = 0
       @used_hints = 0
@@ -37,7 +37,7 @@ module Codebreaker
 
     private
 
-    def generate
+    def generate_secret_code
       Array.new(4) { rand(1..6) }
     end
 
