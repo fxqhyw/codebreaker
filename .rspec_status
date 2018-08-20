@@ -1,0 +1,31 @@
+example_id                                   | status | run_time        |
+-------------------------------------------- | ------ | --------------- |
+./spec/codebreaker_spec.rb[1:1]              | passed | 0.00047 seconds |
+./spec/game_spec.rb[1:1:1]                   | passed | 0.0005 seconds  |
+./spec/game_spec.rb[1:2:1]                   | passed | 0.00034 seconds |
+./spec/game_spec.rb[1:2:2]                   | passed | 0.00127 seconds |
+./spec/game_spec.rb[1:3:1:1]                 | passed | 0.00096 seconds |
+./spec/game_spec.rb[1:3:2:1]                 | passed | 0.00014 seconds |
+./spec/game_spec.rb[1:3:3:1:1]               | passed | 0.00014 seconds |
+./spec/game_spec.rb[1:3:3:2:1]               | passed | 0.00014 seconds |
+./spec/game_spec.rb[1:3:3:3:1]               | passed | 0.00015 seconds |
+./spec/game_spec.rb[1:3:3:4:1]               | passed | 0.00011 seconds |
+./spec/game_spec.rb[1:4:1]                   | passed | 0.00457 seconds |
+./spec/user_interface_spec.rb[1:1:1]         | passed | 0.00125 seconds |
+./spec/user_interface_spec.rb[1:1:2:1:1]     | passed | 0.00035 seconds |
+./spec/user_interface_spec.rb[1:1:2:2:1]     | passed | 0.00027 seconds |
+./spec/user_interface_spec.rb[1:2:1:1]       | passed | 0.0008 seconds  |
+./spec/user_interface_spec.rb[1:2:1:2]       | passed | 0.0011 seconds  |
+./spec/user_interface_spec.rb[1:2:2:1:1:1]   | passed | 0.00092 seconds |
+./spec/user_interface_spec.rb[1:2:2:1:1:2]   | passed | 0.00198 seconds |
+./spec/user_interface_spec.rb[1:2:2:1:2:1]   | passed | 0.00109 seconds |
+./spec/user_interface_spec.rb[1:2:2:2:1]     | passed | 0.00087 seconds |
+./spec/user_interface_spec.rb[1:2:2:2:2]     | passed | 0.00091 seconds |
+./spec/user_interface_spec.rb[1:2:2:3:1]     | passed | 0.00068 seconds |
+./spec/user_interface_spec.rb[1:2:2:3:2]     | passed | 0.00039 seconds |
+./spec/user_interface_spec.rb[1:2:3:1]       | passed | 0.00037 seconds |
+./spec/user_interface_spec.rb[1:2:3:2:1]     | passed | 0.0005 seconds  |
+./spec/user_interface_spec.rb[1:2:3:2:2:1:1] | passed | 0.00049 seconds |
+./spec/user_interface_spec.rb[1:2:3:2:2:2:1] | passed | 0.00069 seconds |
+./spec/user_interface_spec.rb[1:2:3:2:2:3:1] | passed | 0.00097 seconds |
+./spec/user_interface_spec.rb[1:2:3:2:2:3:2] | passed | 0.00091 seconds |
